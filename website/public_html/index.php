@@ -7,9 +7,9 @@
 	if($_SERVER["REQUEST_METHOD"] == "POST"){
 		$input = file_get_contents('php://input');
 		for($i=0; $i<4; $i++){
-			$name = 'SW'.($i+1);
+			$name = 'sw'.($i+1);
 			if(strpos($input, $name) !== false){
-				$switchs[$i] = new SW($name, (strpos($input, $name.'_ON') !== false)?$name."_ON":$name."_OFF");
+				$switchs[$i] = new SW($name, (strpos($input, $name.'_on') !== false)?$name."_on":$name."_off");
 			}
 		}
 		$m_switchs->saveData($switchs);
@@ -26,8 +26,8 @@
 				for($i=0; $i<4; $i++){
 					echo "
 						SWITCH ".($i+1)."
-						<input type='radio' name='".$switchs[$i]->name."' value='SW".($i+1)."_ON' ".((strpos($switchs[$i]->value, 'ON') !== false)?"checked":"")." />ON
-						<input type='radio' name='".$switchs[$i]->name."' value='SW".($i+1)."_OFF' ".((strpos($switchs[$i]->value, 'OFF') !== false)?"checked":"")." />OFF
+						<input type='radio' ".((strpos($switchs[$i]->value, 'on') !== false)?"checked":"")." value='sw".($i+1)."_on' name='".$switchs[$i]->name."' />ON
+						<input type='radio' ".((strpos($switchs[$i]->value, 'off') !== false)?"checked":"")." value='sw".($i+1)."_off' name='".$switchs[$i]->name."' />OFF
 						<br>
 					";
 				}

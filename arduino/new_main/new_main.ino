@@ -4,6 +4,7 @@ int SW_1 = 10;
 int SW_2 = 11;
 int SW_3 = 12;
 int SW_4 = 13;
+int touch_1 = 4;
 
 //String ssid = "Mon Mina";
 //String password = "tamsotam";
@@ -30,17 +31,23 @@ void setup()
   Serial.begin(9600);
   esp8266.begin(9600);
 
+  pinMode(touch_1, INPUT);
+  
   connectWifi(ssid, password);
 }
  
 void loop()
 {
+  Serial.println(digitalRead(touch_1));
 //  testESPInOut();
+
+  //Send data to website
 //  String data = "sw1=sw1_off&sw2=sw2_off&sw3=sw3_off&sw4=sw4_off";
 //  sendDataToWebsite(server, mainURI, data);
 //  delay(60000);
-  getDataFromWebsite(server, dataURI);
-  delay(delay_5x);
+  //Get data from website
+//  getDataFromWebsite(server, dataURI);
+//  delay(delay_5x);
 }
 
 void connectWifi(String ssid, String password)

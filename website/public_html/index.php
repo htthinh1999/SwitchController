@@ -14,28 +14,59 @@
 		}
 		$m_switchs->saveData($switchs);
 	}
+?>
+<html>
+<head>
+<title>Electronic Controller</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/css/bootstrap4-toggle.min.css">
+
+<script src="assets/js/font-awesome.js"></script>
+</head>
+<body>
+	<div>
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<a class="navbar-brand" href="#"><i class="fas fa-plug"></i> Electronic Controller</a>
+		</nav>
+	</div>
 	
-	echo "
-		<html>
-		<head>
-		<title>KEYCODE MON</title>
-		</head>
-		<body>
-			<h1>Electronic Controller</h1>
-			<form method='POST'>";
+	<div>
+		<form id='main-form' method='POST'>
+			<div style='display:none'>
+			<?php
 				for($i=0; $i<4; $i++){
 					echo "
-						SWITCH ".($i+1)."
-						<input type='radio' ".((strpos($switchs[$i]->value, 'on') !== false)?"checked":"")." value='sw".($i+1)."_on' name='".$switchs[$i]->name."' />ON
-						<input type='radio' ".((strpos($switchs[$i]->value, 'off') !== false)?"checked":"")." value='sw".($i+1)."_off' name='".$switchs[$i]->name."' />OFF
-						<br>
+						<div class='form-check'>
+							<label>SWITCH ".($i+1)."</label>
+							<input type='radio' ".((strpos($switchs[$i]->value, 'on') !== false)?"checked":"")." value='sw".($i+1)."_on' name='".$switchs[$i]->name."' id='sw".($i+1)."_on' class='form-check-input'>
+							<label class='form-check-label' for='sw".($i+1)."_on'>ON</label>
+							<input type='radio' ".((strpos($switchs[$i]->value, 'off') !== false)?"checked":"")." value='sw".($i+1)."_off' name='".$switchs[$i]->name."' id='sw".($i+1)."_off' class='form-check-input'>
+							<label class='form-check-label' for='sw".($i+1)."_off'>OFF</label>
+						</div>
 					";
 				}
-	echo 		"<br>
-				<input type='submit' />
-			</form>
-		</body>
-		</html>
-	";
+			?>
+			</div>
+			<?php
+				for($i=0; $i<4; $i++){
+					echo "
+					<div class='form-check'>
+						<label class='form-check-label' for='switch".($i+1)."'><b>SWITCH ".($i+1)."</b></label>
+						<input class='form-check-input' type='checkbox' ".((strpos($switchs[$i]->value, 'on') !== false)?"checked":"")." data-toggle='toggle' data-onstyle='success' data-offstyle='danger' id='switch".($i+1)."' data-size='sm' onchange='updateData(".($i+1).")' >
+					</div>
+					";
+				}
+			?>
+		</form>
+	</div>
 	
-?>
+	<script src="assets/js/main.js"></script>
+	<script src="assets/js/jquery-3.2.1.slim.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/bootstrap4-toggle.min.js"></script>
+</body>
+</html>

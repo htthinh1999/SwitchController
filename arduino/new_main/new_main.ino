@@ -10,9 +10,10 @@ int touch_1 = 4;
 //String password = "tamsotam";
 String ssid = "MON - NIO - PUPPY 2.4GHz";
 String password = "44444444";
-String server = "switchcontrol.000webhostapp.com";
+String mainServer = "switchcontrol.000webhostapp.com";
 String mainURI = "/index.php";
-String dataURI = "/data.json";
+String dataServer = "api.thingspeak.com";
+String dataURI = "/apps/thinghttp/send_request?api_key=3WHC8COD0U68VD2N";
 String wifiToConnect = "\""+ssid+"\",\""+password+"\"";
 
 int delay_speed = 1000;
@@ -26,29 +27,7 @@ int delay_15x = 10*delay_speed;
 
 SoftwareSerial esp8266(2,3);
 
-void setup()
-{
-  Serial.begin(9600);
-  esp8266.begin(9600);
-
-  pinMode(touch_1, INPUT);
-  
-  connectWifi(ssid, password);
-}
- 
-void loop()
-{
-  Serial.println(digitalRead(touch_1));
-//  testESPInOut();
-
-  //Send data to website
-//  String data = "sw1=sw1_off&sw2=sw2_off&sw3=sw3_off&sw4=sw4_off";
-//  sendDataToWebsite(server, mainURI, data);
-//  delay(60000);
-  //Get data from website
-//  getDataFromWebsite(server, dataURI);
-//  delay(delay_5x);
-}
+static bool sw1_on = false;
 
 void connectWifi(String ssid, String password)
 {
@@ -59,50 +38,83 @@ void connectWifi(String ssid, String password)
   Serial.println("Wifi connected!");
 }
 
-void sendDataToWebsite(String server, String uri, String data){
-  Serial.println("Connecting to website \""+server+"\"");
-  sendATcommand("AT+CIPSTART=\"TCP\",\"" + server + "\",80", delay_2x);
-  Serial.println("Website connected!");
-
-  Serial.println("POST request with data: " + data);
-  String postRequest =
-    "POST " + uri + " HTTP/1.0\r\n" +
-    "Host: " + server + "\r\n" +
-    "Accept: *" + "/" + "*\r\n" +
-    "Content-Length: " + data.length() + "\r\n" +
-    "Content-Type: application/x-www-form-urlencoded\r\n" +
-    "\r\n" + data;
-
-  esp8266.print("AT+CIPSEND=");
-  esp8266.println(String(postRequest.length()));
-  esp8266.println(postRequest);
-  delay(1000);
-  esp8266.println("AT+CIPCLOSE");
-
-  Serial.println("Send data complete!\n");
+void sendDataToWebsite(){
+  if(digitalRead(touch_1)){
+    Serial.println("\nSending data");
+    digitalWrite(13, HIGH);
+    sw1_on = !sw1_on;
+    
+    String sw1Data = (sw1_on)?"on":"off";
+    String data = "sw1=sw1_"+sw1Data+"&sw2=sw2_off&sw3=sw3_off&sw4=sw4_off";
+    Serial.println("Connecting to website \""+mainServer+"\"");
+    sendATcommand("AT+CIPSTART=\"TCP\",\"" + mainServer + "\",80", delay_2x);
+    Serial.println("Website connected!");
+  
+    Serial.println("POST request with data: " + data);
+    String postRequest =
+      "POST " + mainURI + " HTTP/1.0\r\n" +
+      "Host: " + mainServer + "\r\n" +
+      "Accept: *" + "/" + "*\r\n" +
+      "Content-Length: " + data.length() + "\r\n" +
+      "Content-Type: application/x-www-form-urlencoded\r\n" +
+      "\r\n" + data;
+  
+    esp8266.print("AT+CIPSEND=");
+    esp8266.println(String(postRequest.length()));
+    esp8266.println(postRequest);
+    delay(delay_1x);
+    esp8266.println("AT+CIPCLOSE");
+  
+    Serial.println("Send data complete!");
+    
+    digitalWrite(13, LOW);
+  }
+  
 }
 
-void getDataFromWebsite(String server, String uri){
-  Serial.println("Connecting to website \"api.thingspeak.com\"");
-  sendATcommand("AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80", delay_2x);
-  Serial.println("Website connected!");
+void getDataFromWebsite(){
+    Serial.println("\nGetting data from website \"" + dataServer + "\"");
+    sendATcommand("AT+CIPSTART=\"TCP\",\"" + dataServer + "\",80", delay_2x);
+    Serial.println("Website connected!");
+  
+    String getRequest = "GET " + dataURI + "\r\nHost: " + dataServer + "\r\n";
+  
+    esp8266.print("AT+CIPSEND=");
+    getESPData();
+    esp8266.println(String(getRequest.length()));
+    getESPData();
+    esp8266.println(getRequest);
+    getESPData();
+    delay(delay_1x);
+    String rs = getESPData();
+    if(rs.indexOf("sw")==-1){
+      Serial.println("Get data failed!\n");
+      return;
+    }
+    String sw1Data = ((rs.indexOf("checked")!=-1)?"sw1_on":"sw1_off");
+    sw1_on = (sw1Data.indexOf("on")!=-1)?true:false;
+    //Serial.println(rs);
+    esp8266.println("AT+CIPCLOSE");
+  
+    Serial.println("Data from website: " + sw1Data);
+}
 
-  String getRequest = "GET /apps/thinghttp/send_request?api_key=3WHC8COD0U68VD2N\r\nHost: api.thingspeak.com\r\n";
+void setup()
+{
+  Serial.begin(9600);
+  esp8266.begin(9600);
 
-  esp8266.print("AT+CIPSEND=");
-  getESPData();
-  esp8266.println(String(getRequest.length()));
-  getESPData();
-  esp8266.println(getRequest);
-  getESPData();
-  delay(1000);
-  String rs = getESPData();
-  String sw1 = ((rs.indexOf("checked")!=-1)?"sw1_on":"sw1_off");
-  Serial.println(rs);
-  esp8266.println("AT+CIPCLOSE");
+  pinMode(touch_1, INPUT);
+  pinMode(13, OUTPUT);
+  
+  connectWifi(ssid, password);
+}
 
-  Serial.println("Get data complete!\n");
-  Serial.println("Data: " + sw1);
+void loop()
+{
+  getDataFromWebsite();
+  sendDataToWebsite();
+  delay(100);
 }
 
 String getESPData(){
@@ -117,34 +129,11 @@ String getESPData(){
     }
     return rs;
   }
-  return "\n";
+  return "";
 }
 
 void sendATcommand(String msg, int dt){
   esp8266.println(msg);
   delay(dt);
   getESPData();
-}
-
-
-void testESPInOut(){
-  if(esp8266.available())
-  {
-    while(esp8266.available())
-    {
-      char c = esp8266.read();
-      Serial.write(c);
-    }  
-  }
-  if(Serial.available())
-  {
-    delay(1000); 
-    String command="";
-    
-    while(Serial.available())
-    {
-      command+=(char)Serial.read();
-    }
-    esp8266.println(command);
-  }
 }

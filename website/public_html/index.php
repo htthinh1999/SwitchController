@@ -1,4 +1,15 @@
 <?php
+	
+	function authenticate(){
+		if(!isset($_SERVER['PHP_AUTH_USER']) || ($_SERVER['PHP_AUTH_USER'] !== 'admin' || $_SERVER['PHP_AUTH_PW'] !== 'admin123')){				
+			header("WWW-Authenticate: Basic realm=\"keycode\"");
+			header("HTTP\ 1.0 401 Unauthorized");
+			die('Something goes wrong!');
+		}
+	}
+
+	authenticate();
+	
 	include_once("../Model/M_Switch.php");
 	
 	$m_switchs = new M_Switch();
@@ -9,7 +20,7 @@
 		for($i=0; $i<4; $i++){
 			$name = 'sw'.($i+1);
 			if(strpos($input, $name) !== false){
-				$switchs[$i] = new SW($name, (strpos($input, $name.'_on') !== false)?$name."_on":$name."_off");
+				$switchs[$i] = new SW($name, (strpos($input, $name.'on') !== false)?$name."on":$name."off");
 			}
 		}
 		$m_switchs->saveData($switchs);
@@ -30,8 +41,24 @@
 	<div>
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 			<a class="navbar-brand" href="#"><i class="fas fa-plug"></i> Electronic Controller</a>
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="#">WELCOME KEYCODE MON</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Logout</a>
+				</li>
+			</ul>
 		</nav>
 	</div>
+	
+	<?php
+		$rs = '';
+		for($i=0; $i<4; $i++){
+			$rs.=$switchs[$i]->value;
+		}
+		echo "<input value='".$rs."' id='data' type='hidden'>";
+	?>
 	
 	<div>
 		<form id='main-form' method='POST'>
@@ -41,10 +68,10 @@
 					echo "
 						<div class='form-check'>
 							<label>SWITCH ".($i+1)."</label>
-							<input type='radio' ".((strpos($switchs[$i]->value, 'on') !== false)?"checked":"")." value='sw".($i+1)."_on' name='".$switchs[$i]->name."' id='sw".($i+1)."_on' class='form-check-input'>
-							<label class='form-check-label' for='sw".($i+1)."_on'>ON</label>
-							<input type='radio' ".((strpos($switchs[$i]->value, 'off') !== false)?"checked":"")." value='sw".($i+1)."_off' name='".$switchs[$i]->name."' id='sw".($i+1)."_off' class='form-check-input'>
-							<label class='form-check-label' for='sw".($i+1)."_off'>OFF</label>
+							<input type='radio' ".((strpos($switchs[$i]->value, 'on') !== false)?"checked":"")." value='sw".($i+1)."on' name='".$switchs[$i]->name."' id='sw".($i+1)."on' class='form-check-input'>
+							<label class='form-check-label' for='sw".($i+1)."on'>ON</label>
+							<input type='radio' ".((strpos($switchs[$i]->value, 'off') !== false)?"checked":"")." value='sw".($i+1)."off' name='".$switchs[$i]->name."' id='sw".($i+1)."off' class='form-check-input'>
+							<label class='form-check-label' for='sw".($i+1)."off'>OFF</label>
 						</div>
 					";
 				}

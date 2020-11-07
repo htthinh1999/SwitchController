@@ -1,15 +1,20 @@
-int SW_1 = 10;
-int SW_2 = 11;
-int SW_3 = 12;
-int SW_4 = 13;
+#include <SoftwareSerial.h>
 
-String ssid = "MON - NIO - PUPPY 2.4GHz";
-String password = "44444444";
-String server = "switchcontrol.000webhostapp.com";
+const int swCount = 4;
+int sw[swCount] = {10, 11, 12, 13};
+int touch[swCount] = {4, 5, 6, 7};
+bool swDatas[swCount];
+
+//String ssid = "Mon Mina";
+//String password = "tamsotam";
+//String ssid = "MON - NIO - PUPPY 2.4GHz";
+//String password = "44444444";
+String ssid = "Tu Nhi";
+String password = "Thao2017";
+String mainServer = "switchcontrol.000webhostapp.com";
 String mainURI = "/index.php";
-String dataURI = "/data.json";
-
-int modeESP = 1; // 1 = Station 2 = Access Point  3 = Both
+String dataServer = "api.thingspeak.com";
+String dataURI = "/apps/thinghttp/send_request?api_key=3WHC8COD0U68VD2N";
 String wifiToConnect = "\""+ssid+"\",\""+password+"\"";
 
 int delay_speed = 1000;
@@ -20,58 +25,133 @@ int delay_4x = 4*delay_speed;
 int delay_5x = 5*delay_speed;
 int delay_10x = 10*delay_speed;
 
+SoftwareSerial esp8266(2,3);
+
+void connectWifi(String ssid, String password)
+{
+  sendATcommand("AT+RST", delay_2x); // Reset ESP8266
+  sendATcommand("AT+CWMODE=1", delay_1x); // Set ESP8266 mode with 1: Station, 2: Access Point, 3: Both
+  Serial.println("Connecting to wifi with SSID = \""+ssid+"\" and PASSWORD = \""+password+"\"");
+  sendATcommand("AT+CWJAP=\""+ssid+"\",\""+password+"\"", delay_10x);
+  Serial.println("Wifi connected!");
+}
+
+void sendDataToWebsite(){
+  bool touched = false;
+  for(int i=0; i<swCount; i++){
+    if(digitalRead(touch[i])){
+      swDatas[i] = !swDatas[i];
+      touched = true;
+    }
+  }
+  if(touched){
+    Serial.println("\nSending data");
+    digitalWrite(13, HIGH);
+    
+    String data = "";
+    for(int i=0; i<swCount; i++){
+      data += "sw" + String(i+1) + (swDatas[i]?"on":"off") + "&";
+    }
+    data = data.substring(0, data.length()-1);
+    
+    Serial.println("Connecting to website \""+mainServer+"\"");
+    sendATcommand("AT+CIPSTART=\"TCP\",\"" + mainServer + "\",80", delay_1x);
+    Serial.println("Website connected!");
+  
+    Serial.println("POST request with data: " + data);
+    // "YWRtaW46YWRtaW4xMjM=" is base 64 encode of username:password "admin:admin123"
+    String postRequest =
+      "POST " + mainURI + " HTTP/1.0\r\n" +
+      "Host: " + mainServer + "\r\n" +
+      "Accept: *" + "/" + "*\r\n" +
+      "Authorization: Basic YWRtaW46YWRtaW4xMjM=\r\n" +
+      "Content-Length: " + data.length() + "\r\n" +
+      "Content-Type: application/x-www-form-urlencoded\r\n" +
+      "\r\n" + data;
+  
+    esp8266.print("AT+CIPSEND=");
+    esp8266.println(String(postRequest.length()));
+    delay(delay_1x/10);
+    esp8266.println(postRequest);
+    delay(delay_1x/2);
+    sendATcommand("AT+CIPCLOSE", delay_1x/3);
+  
+    Serial.println("Send data complete!");
+    
+    digitalWrite(13, LOW);
+  }
+  
+}
+
+void getDataFromWebsite(){
+    Serial.println("\nGetting data from website \"" + dataServer + "\"");
+    sendATcommand("AT+CIPSTART=\"TCP\",\"" + dataServer + "\",80", delay_1x);
+    Serial.println("Website connected!");
+  
+    String getRequest = "GET " + dataURI + "\r\nHost: " + dataServer + "\r\n";
+  
+    esp8266.print("AT+CIPSEND=");
+    getESPData();
+    esp8266.println(String(getRequest.length()));
+    delay(delay_1x/10);
+    getESPData();
+    esp8266.println(getRequest);
+    getESPData();
+    delay(delay_1x/2);
+    String rs = getESPData();
+    if(rs.indexOf("sw")==-1){
+      Serial.println("Get data failed!\n");
+      sendATcommand("AT+CIPCLOSE", delay_1x/3);
+      return;
+    }
+    
+//    Serial.println(rs);
+    Serial.print("Data from website: ");
+    for(int i=0; i<swCount; i++){
+      swDatas[i] = (rs.indexOf("sw"+String(i+1)+"on")!=-1)?true:false;
+      digitalWrite(sw[i], swDatas[i]);
+      Serial.print("sw"+String(i+1)+((swDatas[i])?"on":"off")+" ");
+    }
+    Serial.println();
+    sendATcommand("AT+CIPCLOSE", delay_1x/3);
+}
 
 void setup()
 {
-  delay(delay_5x);
-  Serial.begin(115200);
-  
-  pinMode(SW_1, OUTPUT);
-  pinMode(SW_2, OUTPUT);
-  pinMode(SW_3, OUTPUT);
-  pinMode(SW_4, OUTPUT);
-  digitalWrite(SW_1, LOW);
-  digitalWrite(SW_2, LOW);
-  digitalWrite(SW_3, LOW);
-  digitalWrite(SW_4, LOW);
-  
+  Serial.begin(9600);
+  esp8266.begin(9600);
+
+  for(int i=0; i<swCount; i++){
+    pinMode(sw[i], OUTPUT);
+    pinMode(touch[i], INPUT);
+  }
+
   connectWifi(ssid, password);
-  delay(10000);
 }
 
 void loop()
 {
-  String data = "sw1=sw1_off&sw2=sw2_off&sw3=sw3_off&sw4=sw4_off";
-  sendDataToWebsite(server, mainURI, data);
-  delay(60000);
+  getDataFromWebsite();
+  sendDataToWebsite();
 }
 
-void connectWifi(String ssid, String password)
-{
-  deliverMessage("AT+RST", delay_2x); // reset ESP8266
-  deliverMessage("AT+CWMODE=1", delay_1x);
-  deliverMessage("AT+CWJAP="+wifiToConnect, delay_10x);
+String getESPData(){
+  if(esp8266.available())
+  {
+    String rs = "";
+    while(esp8266.available())
+    {
+      char c = esp8266.read();
+//      Serial.write(c);
+      rs += String(c);
+    }
+    return rs;
+  }
+  return "";
 }
 
-void sendDataToWebsite(String server, String uri, String data){
-  deliverMessage("AT+CIPSTART=\"TCP\",\"" + server + "\",80", delay_1x);
-  
-  String postRequest =
-    "POST " + uri + " HTTP/1.0\r\n" +
-    "Host: " + server + "\r\n" +
-    "Accept: *" + "/" + "*\r\n" +
-    "Content-Length: " + data.length() + "\r\n" +
-    "Content-Type: application/x-www-form-urlencoded\r\n" +
-    "\r\n" + data;
-  Serial.print("AT+CIPSEND=");
-  Serial.println(postRequest.length());
-  delay(delay_1x);
-  deliverMessage(postRequest, delay_3x);
-  deliverMessage("AT+CIPCLOSE", delay_1x);
-}
-
-void deliverMessage(const String& msg, int dt)
-{
-  Serial.println(msg);
+void sendATcommand(String msg, int dt){
+  esp8266.println(msg);
   delay(dt);
+  getESPData();
 }

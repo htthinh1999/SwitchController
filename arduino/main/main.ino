@@ -4,13 +4,12 @@ const int swCount = 4;
 int sw[swCount] = {10, 11, 12, 13};
 int touch[swCount] = {4, 5, 6, 7};
 bool swDatas[swCount];
+int led = 8;
 
 //String ssid = "Mon Mina";
 //String password = "tamsotam";
-//String ssid = "MON - NIO - PUPPY 2.4GHz";
-//String password = "44444444";
-String ssid = "Tu Nhi";
-String password = "Thao2017";
+String ssid = "MON - NIO - PUPPY 2.4GHz";
+String password = "44444444";
 String mainServer = "switchcontrol.000webhostapp.com";
 String mainURI = "/index.php";
 String dataServer = "api.thingspeak.com";
@@ -38,18 +37,24 @@ void connectWifi(String ssid, String password)
 
 void sendDataToWebsite(){
   bool touched = false;
+  Serial.print("Touched: ");
   for(int i=0; i<swCount; i++){
     if(digitalRead(touch[i])){
       swDatas[i] = !swDatas[i];
       touched = true;
+      Serial.print(String(i+1) + " ");
     }
   }
+  Serial.println();
+
+  
   if(touched){
     Serial.println("\nSending data");
-    digitalWrite(13, HIGH);
+    digitalWrite(led, HIGH);
     
     String data = "";
     for(int i=0; i<swCount; i++){
+      digitalWrite(sw[i], swDatas[i]);
       data += "sw" + String(i+1) + (swDatas[i]?"on":"off") + "&";
     }
     data = data.substring(0, data.length()-1);
@@ -78,7 +83,7 @@ void sendDataToWebsite(){
   
     Serial.println("Send data complete!");
     
-    digitalWrite(13, LOW);
+    digitalWrite(led, LOW);
   }
   
 }
@@ -97,7 +102,7 @@ void getDataFromWebsite(){
     getESPData();
     esp8266.println(getRequest);
     getESPData();
-    delay(delay_1x/2);
+    delay(delay_1x);
     String rs = getESPData();
     if(rs.indexOf("sw")==-1){
       Serial.println("Get data failed!\n");
@@ -125,6 +130,7 @@ void setup()
     pinMode(sw[i], OUTPUT);
     pinMode(touch[i], INPUT);
   }
+  pinMode(led, OUTPUT);
 
   connectWifi(ssid, password);
 }

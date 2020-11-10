@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Switch Controller</string>
+    <string name="login">LOGIN</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="not_valid_input">Your input is not valid!</string>
+    <string name="login_failed">Username or password is not valid!</string>
+</resources>

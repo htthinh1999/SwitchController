@@ -5,4 +5,8 @@
     <string name="password">Password</string>
     <string name="not_valid_input">Your input is not valid!</string>
     <string name="login_failed">Username or password is not valid!</string>
+    <string name="switch_1">Switch 1</string>
+    <string name="switch_2">Switch 2</string>
+    <string name="switch_3">Switch 3</string>
+    <string name="switch_4">Switch 4</string>
 </resources>

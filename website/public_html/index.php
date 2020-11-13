@@ -77,18 +77,27 @@
 				}
 			?>
 			</div>
+		</form>
+	</div>
+	
+	<table>
+	<tr>
+		<td rowspan='5'>
+			<img src="assets/images/switch.jpg" alt="switch">
+		</td>
+	</tr>
 			<?php
 				for($i=0; $i<4; $i++){
 					echo "
-					<div class='form-check'>
-						<label class='form-check-label' for='switch".($i+1)."'><b>SWITCH ".($i+1)."</b></label>
+				<tr>
+					<td>
 						<input class='form-check-input' type='checkbox' ".((strpos($switchs[$i]->value, 'on') !== false)?"checked":"")." data-toggle='toggle' data-onstyle='success' data-offstyle='danger' id='switch".($i+1)."' data-size='sm' onchange='updateData(".($i+1).")' >
-					</div>
-					";
+					</td>
+					
+				</tr>";
 				}
-			?>
-		</form>
-	</div>
+			?>	
+	</table>
 	
 	<script src="assets/js/main.js"></script>
 	<script src="assets/js/jquery-3.2.1.slim.min.js"></script>

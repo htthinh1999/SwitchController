@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             JSONObject jsonObject = response.getJSONObject(i);
                             swData[i] = jsonObject.getString("value").contains("on");
                             sw[i].setChecked(swData[i]);
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

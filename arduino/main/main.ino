@@ -1,11 +1,14 @@
 #include <SoftwareSerial.h>
 
 const int swCount = 4;
-int sw[swCount] = {10, 11, 12, 13};
+int sw[swCount] = {9, 10, 11, 12};
+int dataLed[swCount] = {A4, A1, A2, A3};
 int touch[swCount] = {4, 5, 6, 7};
-bool swDatas[swCount];
-int led = 8;
+bool swData[swCount];
+int sendDataLed = 8;
 
+//String ssid = "niothong";
+//String password = "19061906";
 //String ssid = "Mon Mina";
 //String password = "tamsotam";
 String ssid = "MON - NIO - PUPPY 2.4GHz";
@@ -40,7 +43,7 @@ void sendDataToWebsite(){
   Serial.print("Touched: ");
   for(int i=0; i<swCount; i++){
     if(digitalRead(touch[i])){
-      swDatas[i] = !swDatas[i];
+      swData[i] = !swData[i];
       touched = true;
       Serial.print(String(i+1) + " ");
     }
@@ -50,12 +53,13 @@ void sendDataToWebsite(){
   
   if(touched){
     Serial.println("\nSending data");
-    digitalWrite(led, HIGH);
+    digitalWrite(sendDataLed, HIGH);
     
     String data = "";
     for(int i=0; i<swCount; i++){
-      digitalWrite(sw[i], swDatas[i]);
-      data += "sw" + String(i+1) + (swDatas[i]?"on":"off") + "&";
+      digitalWrite(sw[i], swData[i]);
+      digitalWrite(dataLed[i], swData[i]);
+      data += "sw" + String(i+1) + (swData[i]?"on":"off") + "&";
     }
     data = data.substring(0, data.length()-1);
     
@@ -83,7 +87,7 @@ void sendDataToWebsite(){
   
     Serial.println("Send data complete!");
     
-    digitalWrite(led, LOW);
+    digitalWrite(sendDataLed, LOW);
   }
   
 }
@@ -102,7 +106,7 @@ void getDataFromWebsite(){
     getESPData();
     esp8266.println(getRequest);
     getESPData();
-    delay(delay_1x);
+    delay(delay_1x/2);
     String rs = getESPData();
     if(rs.indexOf("sw")==-1){
       Serial.println("Get data failed!\n");
@@ -113,9 +117,10 @@ void getDataFromWebsite(){
 //    Serial.println(rs);
     Serial.print("Data from website: ");
     for(int i=0; i<swCount; i++){
-      swDatas[i] = (rs.indexOf("sw"+String(i+1)+"on")!=-1)?true:false;
-      digitalWrite(sw[i], swDatas[i]);
-      Serial.print("sw"+String(i+1)+((swDatas[i])?"on":"off")+" ");
+      swData[i] = (rs.indexOf("sw"+String(i+1)+"on")!=-1)?true:false;
+      digitalWrite(sw[i], swData[i]);
+      digitalWrite(dataLed[i], swData[i]);
+      Serial.print("sw"+String(i+1)+((swData[i])?"on":"off")+" ");
     }
     Serial.println();
     sendATcommand("AT+CIPCLOSE", delay_1x/3);
@@ -128,9 +133,10 @@ void setup()
 
   for(int i=0; i<swCount; i++){
     pinMode(sw[i], OUTPUT);
+    pinMode(dataLed[i], OUTPUT);
     pinMode(touch[i], INPUT);
   }
-  pinMode(led, OUTPUT);
+  pinMode(sendDataLed, OUTPUT);
 
   connectWifi(ssid, password);
 }
@@ -148,7 +154,7 @@ String getESPData(){
     while(esp8266.available())
     {
       char c = esp8266.read();
-//      Serial.write(c);
+      Serial.write(c);
       rs += String(c);
     }
     return rs;

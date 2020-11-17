@@ -13,10 +13,10 @@ int sendDataLed = 8;
 //String password = "tamsotam";
 String ssid = "MON - NIO - PUPPY 2.4GHz";
 String password = "44444444";
-String mainServer = "switchcontrol.000webhostapp.com";
+String mainServer = "switchcontrol.xyz";
 String mainURI = "/index.php";
 String dataServer = "api.thingspeak.com";
-String dataURI = "/apps/thinghttp/send_request?api_key=3WHC8COD0U68VD2N";
+String dataURI = "/apps/thinghttp/send_request?api_key=6H2N36T47FNFS3QX";
 String wifiToConnect = "\""+ssid+"\",\""+password+"\"";
 
 int delay_speed = 1000;
@@ -92,6 +92,7 @@ void sendDataToWebsite(){
   
 }
 
+
 void getDataFromWebsite(){
     Serial.println("\nGetting data from website \"" + dataServer + "\"");
     sendATcommand("AT+CIPSTART=\"TCP\",\"" + dataServer + "\",80", delay_1x);
@@ -102,19 +103,19 @@ void getDataFromWebsite(){
     esp8266.print("AT+CIPSEND=");
     getESPData();
     esp8266.println(String(getRequest.length()));
-    delay(delay_1x/10);
+    delay(delay_1x/5);
     getESPData();
     esp8266.println(getRequest);
     getESPData();
-    delay(delay_1x/2);
+    delay(delay_1x);
     String rs = getESPData();
+    Serial.println("rs = " + rs);
     if(rs.indexOf("sw")==-1){
       Serial.println("Get data failed!\n");
-      sendATcommand("AT+CIPCLOSE", delay_1x/3);
+      sendATcommand("AT+CIPCLOSE", delay_1x);
       return;
     }
     
-//    Serial.println(rs);
     Serial.print("Data from website: ");
     for(int i=0; i<swCount; i++){
       swData[i] = (rs.indexOf("sw"+String(i+1)+"on")!=-1)?true:false;
@@ -123,7 +124,7 @@ void getDataFromWebsite(){
       Serial.print("sw"+String(i+1)+((swData[i])?"on":"off")+" ");
     }
     Serial.println();
-    sendATcommand("AT+CIPCLOSE", delay_1x/3);
+    sendATcommand("AT+CIPCLOSE", delay_1x);
 }
 
 void setup()
@@ -154,7 +155,7 @@ String getESPData(){
     while(esp8266.available())
     {
       char c = esp8266.read();
-      Serial.write(c);
+//      Serial.write(c);
       rs += String(c);
     }
     return rs;

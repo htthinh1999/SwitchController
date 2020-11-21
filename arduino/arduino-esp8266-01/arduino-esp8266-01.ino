@@ -129,8 +129,8 @@ void getDataFromWebsite(){
 
 void setup()
 {
-  Serial.begin(9600);
-  esp8266.begin(9600);
+  Serial.begin(115200);
+  esp8266.begin(115200);
 
   for(int i=0; i<swCount; i++){
     pinMode(sw[i], OUTPUT);
@@ -155,7 +155,7 @@ String getESPData(){
     while(esp8266.available())
     {
       char c = esp8266.read();
-//      Serial.write(c);
+      Serial.write(c);
       rs += String(c);
     }
     return rs;

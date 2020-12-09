@@ -3,7 +3,7 @@
 
 const int swCount = 4;
 int sw[swCount] = {D6, D7, D8, D9};
-int touch[swCount] = {D0, D1, D2, D5};
+int touch[swCount] = {D5, D2, D1, D0};
 bool swData[swCount];
 String ssid = "MON - NIO - PUPPY 2.4GHz";
 String password = "44444444";
@@ -35,7 +35,8 @@ void connectWifi(String ssid, String pass){
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);
-    Serial.print(".");
+    Serial.println("Connecting to wifi!");
+    getTouch();
   }
   Serial.println();
   Serial.println("WiFi connected");
@@ -67,11 +68,11 @@ void getDataFromWebsite(){
   delay(delay_1x);
 }
 
-void sendDataToWebsite(){
+bool getTouch(){
   bool touched = false;
   Serial.print("Touched: ");
   for(int i=0; i<swCount; i++){
-    if(i!=2&&digitalRead(touch[i])){
+    if(digitalRead(touch[i])){
       swData[i] = !swData[i];
       digitalWrite(sw[i], swData[i]);
       Serial.print(String(i+1) + " ");
@@ -79,7 +80,11 @@ void sendDataToWebsite(){
     }
   }
   Serial.print((touched)?"\n":" None\n");
-  if(touched){
+  return touched;
+}
+
+void sendDataToWebsite(){
+  if(getTouch()){
     if (WiFi.status() == WL_CONNECTED) {
       HTTPClient http;
   

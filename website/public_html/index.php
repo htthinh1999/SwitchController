@@ -11,20 +11,24 @@
 	authenticate();
 	
 	include_once("../Model/M_Switch.php");
-	
-	$m_switchs = new M_Switch();
-	$switchs = $m_switchs->getAllData();
-	
-	if($_SERVER["REQUEST_METHOD"] == "POST"){
-		$input = file_get_contents('php://input');
-		for($i=0; $i<4; $i++){
-			$name = 'sw'.($i+1);
-			if(strpos($input, $name) !== false){
-				$switchs[$i] = new SW($name, (strpos($input, $name.'on') !== false)?$name."on":$name."off");
+
+	function process(){
+		$m_switchs = new M_Switch();
+		$switchs = $m_switchs->getAllData();
+		
+		if($_SERVER["REQUEST_METHOD"] == "POST"){
+			$input = file_get_contents('php://input');
+			for($i=0; $i<4; $i++){
+				$name = $switchs[$i]->name;
+				if(strpos($input, $name) !== false){
+					$switchs[$i] = new SW($name, (strpos($input, $name.'on') !== false)?$name."on":$name."off");
+				}
 			}
+			$m_switchs->saveData($switchs);
 		}
-		$m_switchs->saveData($switchs);
 	}
+	
+	process();
 ?>
 <html>
 <head>
@@ -53,6 +57,10 @@
 	</div>
 	
 	<?php
+		
+		$m_switchs = new M_Switch();
+		$switchs = $m_switchs->getAllData();
+
 		$rs = '';
 		for($i=0; $i<4; $i++){
 			$rs.=$switchs[$i]->value;

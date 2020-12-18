@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int[] swId = new int[]{ R.id.sw1, R.id.sw2, R.id.sw3, R.id.sw4 };
     boolean[] swData = new boolean[4];
 
-    final String mainServer = "https://switchcontrol.000webhostapp.com";
+    final String mainServer = "https://switchcontrol.xyz";
     final String mainURI = "/index.php";
     final String dataURI = "/data.json";
     static boolean sendingData = false;
@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // "YWRtaW46YWRtaW4xMjM=" is base 64 encode of username:password "admin:admin123"
                     headers.put("Authorization", "Basic YWRtaW46YWRtaW4xMjM=");
                     return headers;
-//                    return super.getHeaders();
                 }
 
                 @Override
@@ -176,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String responseString = "";
                     if (response != null) {
                         responseString = String.valueOf(response.statusCode);
-                        // can get more details such as response.headers
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
                 }

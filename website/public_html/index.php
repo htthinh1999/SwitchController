@@ -35,10 +35,18 @@
 <title>Electronic Controller</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="assets/css/style.css">
-<link rel="stylesheet" href="assets/css/bootstrap.min.css">
-<link rel="stylesheet" href="assets/css/bootstrap4-toggle.min.css">
 
+<link rel="stylesheet" href="assets/css/style.css">
+
+<!-- Boostrap min CSS -->
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+<!-- End Boostrap min CSS -->
+
+<!-- Boostrap toggle min CSS -->
+<link rel="stylesheet" href="assets/css/bootstrap4-toggle.min.css">
+<!-- <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet"> -->
+<!-- End Boostrap toggle min CSS -->
 <script src="assets/js/font-awesome.js"></script>
 </head>
 <body>
@@ -108,9 +116,26 @@
 	</table>
 	
 	<script src="assets/js/main.js"></script>
+	
+	<!-- Jquery min JS -->
 	<script src="assets/js/jquery-3.2.1.slim.min.js"></script>
-    <script src="assets/js/popper.min.js"></script>
+	<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
+	<!-- End Jquery min JS -->
+	
+	<!-- Proper min JS -->
+    <script src="assets/js/popper.min.js">
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> -->
+	<!-- End Proper min JS -->
+	
+
+	<!-- Boostrap min JS -->
     <script src="assets/js/bootstrap.min.js"></script>
+	<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+	<!-- End Boostrap min JS -->
+
+	<!-- Boostrap toggle min JS -->
 	<script src="assets/js/bootstrap4-toggle.min.js"></script>
+	<!-- <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script> -->
+	<!-- End Boostrap toggle min JS -->
 </body>
 </html>

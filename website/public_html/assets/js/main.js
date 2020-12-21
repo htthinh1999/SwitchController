@@ -17,3 +17,29 @@ async function updateData(index){
 	await new Promise(r => setTimeout(r, 600));
 	document.getElementById('main-form').submit();
 }
+
+$(document).ready(function() {
+
+	setInterval(autoUpdate, 1000);
+
+	function autoUpdate(){
+		$.ajax({
+			url: 'data.json',
+			type: 'GET',
+			success: function(response){
+				reloadSwitch(response);
+			}
+		});
+	}
+
+	function reloadSwitch(data){
+		$.each(data, function(i){
+			// alert(this.name + ' ' + this.value);
+			var sw = $('#switch'+(i+1));
+			if($(sw).prop('checked') != (this.value == 'sw'+(i+1)+'on')){	
+				$(sw).click();
+			}
+		});
+	}
+
+});

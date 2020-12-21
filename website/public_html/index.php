@@ -115,11 +115,9 @@
 			?>	
 	</table>
 	
-	<script src="assets/js/main.js"></script>
-	
 	<!-- Jquery min JS -->
-	<script src="assets/js/jquery-3.2.1.slim.min.js"></script>
-	<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
+	<script src="assets/js/jquery-3.5.1.min.js"></script>
+	<!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
 	<!-- End Jquery min JS -->
 	
 	<!-- Proper min JS -->
@@ -137,5 +135,8 @@
 	<script src="assets/js/bootstrap4-toggle.min.js"></script>
 	<!-- <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script> -->
 	<!-- End Boostrap toggle min JS -->
+
+	<script src="assets/js/main.js"></script>
+
 </body>
 </html>

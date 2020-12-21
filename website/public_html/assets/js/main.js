@@ -1,4 +1,8 @@
+clicked = false;
+
 async function updateData(index){
+	clicked = true;
+
 	var changed = false;
 	if(document.getElementById('sw'+index+'on').checked){
 		document.getElementById('sw'+index+'off').checked = true;
@@ -20,7 +24,7 @@ async function updateData(index){
 
 $(document).ready(function() {
 
-	setInterval(autoUpdate, 1000);
+	setInterval(autoUpdate, 500);
 
 	function autoUpdate(){
 		$.ajax({
@@ -33,13 +37,15 @@ $(document).ready(function() {
 	}
 
 	function reloadSwitch(data){
-		$.each(data, function(i){
-			// alert(this.name + ' ' + this.value);
-			var sw = $('#switch'+(i+1));
-			if($(sw).prop('checked') != (this.value == 'sw'+(i+1)+'on')){	
-				$(sw).click();
-			}
-		});
+		if(!clicked){
+			$.each(data, function(i){
+				// alert(this.name + ' ' + this.value);
+				var sw = $('#switch'+(i+1));
+				if($(sw).prop('checked') != (this.value == 'sw'+(i+1)+'on')){	
+					$(sw).click();
+				}
+			});
+		}
 	}
 
 });

@@ -52,10 +52,10 @@
 <body>
 	<div>
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<a class="navbar-brand" href="#"><i class="fas fa-plug"></i> Electronic Controller</a>
+			<a class="navbar-brand" href="index.php"><i class="fas fa-plug"></i> Electronic Controller</a>
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
-					<a class="nav-link" href="#">WELCOME KEYCODE MON</a>
+					<a class="nav-link" href="index.php">WELCOME KEYCODE MON</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#">Logout</a>

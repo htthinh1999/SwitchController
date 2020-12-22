@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int[] swId = new int[]{ R.id.sw1, R.id.sw2, R.id.sw3, R.id.sw4 };
     boolean[] swData = new boolean[4];
 
-    final String mainServer = "https://switchcontrol.xyz";
+    final String mainServer = "http://switchcontrol.xyz";
     final String mainURI = "/index.php";
     final String dataURI = "/data.json";
     static boolean sendingData = false;
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(getApplicationContext(), "Cannot get data from website!", Toast.LENGTH_LONG).show();
+                    Log.d("Error get request", error.toString());
                 }
             });
 

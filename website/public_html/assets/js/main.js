@@ -24,7 +24,7 @@ async function updateData(index){
 
 $(document).ready(function() {
 
-	setInterval(autoUpdate, 500);
+	setInterval(autoUpdate, 2000);
 
 	function autoUpdate(){
 		$.ajax({

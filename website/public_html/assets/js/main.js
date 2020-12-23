@@ -23,29 +23,28 @@ async function updateData(index){
 }
 
 $(document).ready(function() {
-
-	setInterval(autoUpdate, 2000);
+	setInterval(autoUpdate, 1000);
 
 	function autoUpdate(){
-		$.ajax({
-			url: 'data.json',
-			type: 'GET',
-			success: function(response){
-				reloadSwitch(response);
-			}
-		});
-	}
-
-	function reloadSwitch(data){
 		if(!clicked){
-			$.each(data, function(i){
-				// alert(this.name + ' ' + this.value);
-				var sw = $('#switch'+(i+1));
-				if($(sw).prop('checked') != (this.value == 'sw'+(i+1)+'on')){	
-					$(sw).click();
+			$.ajax({
+				url: 'data.json',
+				type: 'GET',
+				success: function(response){
+					reloadSwitch(response);
 				}
 			});
 		}
+	}
+
+	function reloadSwitch(data){
+		$.each(data, function(i){
+			// alert(this.name + ' ' + this.value);
+			var sw = $('#switch'+(i+1));
+			if($(sw).prop('checked') != (this.value == 'sw'+(i+1)+'on')){
+				$(sw).click();
+			}
+		});
 	}
 
 });

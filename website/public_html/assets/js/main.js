@@ -23,7 +23,9 @@ async function updateData(index){
 }
 
 $(document).ready(function() {
-	setInterval(autoUpdate, 1000);
+	setTimeout(function() {
+		setInterval(autoUpdate, 1000);
+	}, 2000);
 
 	function autoUpdate(){
 		if(!clicked){

@@ -7,6 +7,8 @@ int touch[swCount] = {D5, D2, D1, D0};
 bool swData[swCount];
 String ssid = "MON - NIO - PUPPY 2.4GHz";
 String password = "44444444";
+//String ssid = "Mon Mina";
+//String password = "tamsotam";
 String mainURL = "http://switchcontrol.xyz";
 String dataURL = "http://switchcontrol.xyz/data.json";
 
